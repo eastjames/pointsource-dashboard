@@ -98,7 +98,7 @@ If either file's column headers change, update `SOURCE_COLUMNS` /
 ## Project structure
 
 ```
-index.html                       Page shell + Content-Security-Policy
+index.html                       Page shell + Content-Security-Policy 
 src/
   main.js                        Entry point: wires map, data, and detail panel together
   style.css                      Layout and theme (light/dark) for the dashboard shell
