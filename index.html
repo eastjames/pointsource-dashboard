@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Global Oil &amp; Gas Methane Point Sources</title>
+
+    <!--
+      Content Security Policy: this app is fully static and client-side (no
+      server, no database, no user accounts), so the main thing worth
+      locking down is *what the page is allowed to fetch*. It may load its
+      own bundled scripts/styles and map tile images from CARTO's basemap
+      CDN, and nothing else.
+
+      'unsafe-inline' on style-src is required because Leaflet positions
+      markers using inline `style` attributes on DOM elements; it does NOT
+      permit inline <script> tags or eval, which script-src still blocks.
+      (During `npm run dev`, Vite's dev-only tooling may need a looser
+      policy - this CSP is intended for the built/production app.)
+
+      Note: `frame-ancestors` (which blocks the page from being embedded in
+      an iframe elsewhere) only takes effect via a real HTTP response
+      header, not this <meta> tag - add it in your web server/hosting
+      config when deploying, e.g. `Content-Security-Policy: frame-ancestors 'none'`.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: https://*.basemaps.cartocdn.com; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self';"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <header id="app-header">
+        <h1>Global Oil &amp; Gas Methane Point Sources</h1>
+      </header>
+
+      <main id="map-root">
+        <div id="map"></div>
+
+        <!-- Detail panel: hidden until a point source marker is clicked (see src/modules/chartView.js) -->
+        <aside id="detail-panel" class="hidden">
+          <button id="detail-close" type="button" aria-label="Close details">&times;</button>
+          <!-- Heading shows facility type (e.g. "Compressor station"); the unique site_id moves into the meta list below. -->
+          <h2 id="detail-title"></h2>
+          <dl class="detail-meta">
+            <dt>Site ID</dt>
+            <dd id="detail-site-id"></dd>
+            <dt>Coordinates</dt>
+            <dd id="detail-coords"></dd>
+          </dl>
+          <p id="detail-imeo" class="detail-imeo"></p>
+          <div class="chart-wrap">
+            <div id="timeseries-chart"></div>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

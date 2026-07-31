@@ -1,0 +1,154 @@
+/* ---------------------------------------------------------------------------
+   style.css
+   Layout and theme for the dashboard shell (header, map area, detail panel).
+   Colors live in CSS variables, sourced from the project's validated
+   light/dark palette, so both themes are defined in one place. The map
+   marker and chart colors are defined alongside their own code, in
+   mapView.js and chartView.js respectively.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+  --surface: #fcfcfb;
+  --page: #f9f9f7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --border: rgba(11, 11, 11, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --surface: #1a1a19;
+    --page: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --border: rgba(255, 255, 255, 0.1);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--page);
+  color: var(--text-primary);
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+#app-header {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+#app-header h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* The map fills all remaining vertical space below the header. */
+#map-root {
+  flex: 1;
+  position: relative;
+  min-height: 0; /* lets this flex child actually shrink/grow instead of overflowing */
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+}
+
+#load-error {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000; /* above Leaflet's own panes */
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+/* Detail panel: slides over the map on the right when a point source is selected. */
+#detail-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000; /* above Leaflet's own panes */
+  width: min(560px, 100%);
+  height: 100%;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  padding: 1.25rem;
+  overflow-y: auto;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+#detail-panel.hidden {
+  display: none;
+}
+
+#detail-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+#detail-name {
+  margin: 0 2rem 0.75rem 0;
+  font-size: 1.15rem;
+}
+
+.detail-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.75rem;
+  margin: 0 0 1.25rem 0;
+  font-size: 0.9rem;
+}
+
+.detail-meta dt {
+  color: var(--text-muted);
+}
+
+.detail-meta dd {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.detail-imeo {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.chart-wrap {
+  position: relative;
+  height: 320px;
+}
