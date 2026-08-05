@@ -152,3 +152,83 @@ body {
   position: relative;
   height: 320px;
 }
+
+/* Floating Leaflet controls: years-of-data legend (bottom-left) and
+   facility-type filter (top-left) - see mapView.js. Both sit on the left
+   so the right-side detail panel can never cover them. */
+.map-legend,
+.map-filter {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem 0.65rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+}
+
+.map-legend-title {
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.map-legend-scale {
+  display: flex;
+}
+
+.map-legend-swatch {
+  width: 28px;
+  height: 14px;
+}
+
+.map-legend-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.2rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.map-filter-toggle {
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.map-filter-menu {
+  margin-top: 0.5rem;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.map-filter-menu.hidden {
+  display: none;
+}
+
+.map-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.map-filter-select-all {
+  font-weight: 600;
+  padding-bottom: 0.3rem;
+  margin-bottom: 0.15rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Individual year checkboxes while "All data" is active - they don't apply to anything, so they're dimmed as well as disabled. */
+.map-filter-row-disabled {
+  opacity: 0.5;
+  cursor: default;
+}

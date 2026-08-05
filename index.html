@@ -40,11 +40,9 @@
         <!-- Detail panel: hidden until a point source marker is clicked (see src/modules/chartView.js) -->
         <aside id="detail-panel" class="hidden">
           <button id="detail-close" type="button" aria-label="Close details">&times;</button>
-          <!-- Heading shows facility type (e.g. "Compressor station"); the unique site_id moves into the meta list below. -->
+          <!-- Heading shows "<country> <facility type>", e.g. "Algeria Gas disposal facility" -->
           <h2 id="detail-title"></h2>
           <dl class="detail-meta">
-            <dt>Site ID</dt>
-            <dd id="detail-site-id"></dd>
             <dt>Coordinates</dt>
             <dd id="detail-coords"></dd>
           </dl>

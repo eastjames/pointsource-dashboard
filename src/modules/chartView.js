@@ -18,6 +18,7 @@
 
 import Plotly from 'plotly.js-basic-dist-min';
 import { EMISSION_UNITS } from './dataLoader.js';
+import { displayLabel, formatCoordinates, formatSiteLabel } from './format.js';
 
 // Every chart shows the same window regardless of which years a given site
 // has data for, so sites are visually comparable at a glance.
@@ -53,7 +54,7 @@ function panelElement() {
 
 /**
  * Populate and reveal the detail panel for the given point source.
- * @param {{name: string, facilityType: string, imeoName: string|null, lat: number, lon: number,
+ * @param {{facilityType: string, imeoName: string|null, country: string, lat: number, lon: number,
  *   annual: {year: number, date: string, value: number, low: number, high: number}[],
  *   plumes: {date: string, value: number, std: number, instrument: string}[]}} source
  */
@@ -62,8 +63,7 @@ export function showTimeSeries(source) {
 
   // textContent (never innerHTML) for every value pulled from the CSV, so a
   // crafted data file can't inject markup/script into the page.
-  document.getElementById('detail-title').textContent = source.facilityType;
-  document.getElementById('detail-site-id').textContent = source.name;
+  document.getElementById('detail-title').textContent = formatSiteLabel(source.country, source.facilityType);
   document.getElementById('detail-coords').textContent = formatCoordinates(source.lat, source.lon);
   document.getElementById('detail-imeo').textContent = `IMEO Source ID: ${source.imeoName || 'n/a'}`;
 
@@ -73,13 +73,6 @@ export function showTimeSeries(source) {
   // chart. Waiting a frame lets Safari finish layout for the now-visible
   // panel before Plotly sizes itself against it.
   requestAnimationFrame(() => renderChart(source));
-}
-
-/** e.g. (31.9686, -102.0779) -> "31.969°N, 102.078°W" */
-function formatCoordinates(lat, lon) {
-  const latDirection = lat >= 0 ? 'N' : 'S';
-  const lonDirection = lon >= 0 ? 'E' : 'W';
-  return `${Math.abs(lat).toFixed(3)}°${latDirection}, ${Math.abs(lon).toFixed(3)}°${lonDirection}`;
 }
 
 /** Hide the detail panel and tear down the plot so it doesn't leak memory. */
@@ -105,6 +98,9 @@ function renderChart(source) {
     xaxis: {
       type: 'date',
       range: X_AXIS_RANGE,
+      dtick: 'M12', // one tick per calendar year, aligned to tick0 below
+      tick0: X_AXIS_RANGE[0],
+      ticklabelmode: 'period', // label reads "2022" centered between the Jan-1 tick marks, not pinned to the tick itself
       gridcolor: GRIDLINE_COLOR,
       linecolor: AXIS_COLOR,
       tickcolor: AXIS_COLOR,
@@ -146,7 +142,7 @@ function buildPlumeTraces(plumes) {
     return {
       type: 'scatter',
       mode: 'markers', // no connecting line between individual plume observations
-      name: instrument,
+      name: displayLabel(instrument),
       x: points.map((p) => p.date),
       y: points.map((p) => p.value),
       marker: { color: style.color, symbol: style.symbol, size: 7, line: { color: '#fcfcfb', width: 1 } },
@@ -158,7 +154,7 @@ function buildPlumeTraces(plumes) {
         thickness: 1.25,
         width: 3,
       },
-      hovertemplate: `%{y:.1f} ${EMISSION_UNITS}<extra>${instrument}</extra>`,
+      hovertemplate: `%{y:.0f} ${EMISSION_UNITS}<extra>${displayLabel(instrument)}</extra>`,
     };
   });
 }
@@ -185,7 +181,7 @@ function buildAnnualTrace(annual) {
         thickness: 2,
         width: 5,
       },
-      hovertemplate: `%{y:.1f} ${EMISSION_UNITS}<extra>Annual average</extra>`,
+      hovertemplate: `%{y:.0f} ${EMISSION_UNITS}<extra>Annual average</extra>`,
     },
   ];
 }

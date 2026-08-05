@@ -4,9 +4,9 @@
 // Loads and joins two CSVs on `site_id` into one record per point source:
 //
 //   portaldata_sources.csv - one row per (site, year): the site's location
-//     plus its annual average emission rate for that year (Qs), with
-//     asymmetric uncertainty bounds (Qslower/Qsupper). A blank Qs means no
-//     annual average was computed for that site/year.
+//     and country, plus its annual average emission rate for that year
+//     (Qs), with asymmetric uncertainty bounds (Qslower/Qsupper). A blank
+//     Qs means no annual average was computed for that site/year.
 //   portaldata_plumes.csv  - one row per individual satellite observation
 //     ("plume") of a site: a timestamped emission rate (ch4_fluxrate, in
 //     kg/hour) with a symmetric standard-deviation uncertainty
@@ -42,6 +42,7 @@ const SOURCE_COLUMNS = {
   value: 'Qs',
   low: 'Qslower',
   high: 'Qsupper',
+  country: 'country',
 };
 
 const PLUME_COLUMNS = {
@@ -57,7 +58,7 @@ const PLUME_COLUMNS = {
 /**
  * Load and join both CSVs.
  * @returns {Promise<Map<string, object>>} Map of site_id -> {
- *   id, name, facilityType, imeoName, lat, lon,
+ *   id, facilityType, imeoName, country, lat, lon,
  *   annual: [{ year: number, date: string, value: number, low: number, high: number }],
  *   plumes: [{ date: string, value: number, std: number, instrument: string }],
  * }
@@ -75,6 +76,7 @@ export async function loadPointSourceData() {
     site.lat = record.lat;
     site.lon = record.lon;
     if (record.imeoName) site.imeoName = record.imeoName;
+    if (record.country) site.country = record.country;
     if (record.annualPoint) site.annual.push(record.annualPoint);
   }
 
@@ -109,10 +111,10 @@ function getOrCreateSite(sites, id) {
   let site = sites.get(id);
   if (!site) {
     site = {
-      id,
-      name: id, // neither file provides a separate display name - the site_id is the identifier
+      id, // used only to join the two CSVs and as the internal map key - never shown in the UI
       facilityType: 'Unknown',
       imeoName: null,
+      country: '',
       lat: null,
       lon: null,
       annual: [],
@@ -140,9 +142,10 @@ function normalizeSourceRow(row) {
   }
 
   const imeoName = (row[SOURCE_COLUMNS.imeoName] ?? '').trim() || null;
+  const country = (row[SOURCE_COLUMNS.country] ?? '').trim() || null;
   const annualPoint = parseAnnualPoint(row, id, year);
 
-  return { id, lat, lon, imeoName, annualPoint };
+  return { id, lat, lon, imeoName, country, annualPoint };
 }
 
 /**
