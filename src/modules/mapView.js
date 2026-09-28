@@ -40,15 +40,15 @@ export function createMap(elementId) {
   const map = L.map(elementId, {
     worldCopyJump: true, // panning past +/-180 degrees wraps around instead of showing empty gray space
     minZoom: 2,
-    maxZoom: 12,
+    maxZoom: 16,
   }).setView([20, 0], 2);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_3u4m_1_67d64592e32d130bffd701fe', {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors ' +
       '&copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: 'abcd',
-    maxZoom: 19,
+    maxZoom: 20,
   }).addTo(map);
 
   return map;
