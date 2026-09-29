@@ -4,3 +4,4 @@ dist/
 *.local
 public/data/old.portaldata_sources.csv
 was.README.md
+public/data/old.portaldata_plumes.csv
